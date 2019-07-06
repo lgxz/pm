@@ -171,6 +171,7 @@ class PhotoHome(DirHash):
 
 
 def get_datetime(path, dts):
+    """判断拍照时间"""
     #GPS DateTime: 2015:04:01 02:55:15Z / 2015:04:11 09:10:42.65Z
     if dts[-1]:
         #UTC Time, 暂不转换为本地时间
@@ -205,6 +206,7 @@ def get_datetime(path, dts):
 
 
 def do_import(home, datefile, srcdir):
+    """执行导入"""
     cs = Counter()
     for line in datefile.open():
         line = line.strip()
@@ -232,6 +234,7 @@ def do_import(home, datefile, srcdir):
 
 
 def cmd_import(home, args):
+    """处理照片导入命令"""
     datefile = Path(args.files[0])
     if len(args.files) == 1:
         srcdir = None
@@ -292,5 +295,4 @@ if __name__ == '__main__':
         return args
 
     main(parse_cmdline())
-
 

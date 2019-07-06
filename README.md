@@ -3,6 +3,8 @@
 
 目标：整理个人的所有历史照片/视频文件，方便存储和备份。
 
+**注意**：在 MacOS 下开发和测试。其它系统，需要调整 prepare.sh。
+
 # Why
 为存储和备份目的，希望照片库能够满足：
 1. 有且仅有需要存储的照片/视频文件
@@ -38,6 +40,11 @@ pm.py 的通用参数如下：
 1. 执行 `./prepare.sh <要导入的大量图片文件的绝对路径>` 生成 files.csv 列表文件
 2. 执行 `./pm.py --test --verbose import files.csv` 观察导入情况
 3. 执行 `./pm.py import files.csv` 导入文件
+
+## 备份
+同步最新的照片库(src) 到 USB/NAS 目录(dest)：
+`rsync -av --progress --delete src/ dest`
+
 
 # FAQ
 

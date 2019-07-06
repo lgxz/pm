@@ -28,17 +28,19 @@ class DirHash():
         """加载 Hash 列表"""
         hash2path = {}
         path2hash = {}
-        for line in self.hashfile.open():
-            line = line.strip()
-            if not line:
-                continue
-            md5, path = line.strip().split(maxsplit=1)
-            assert(md5 not in hash2path)
-            hash2path[md5] = path
-            path2hash[path] = md5
+        if self.hashfile.exists():
+            for line in self.hashfile.open():
+                line = line.strip()
+                if not line:
+                    continue
+                md5, path = line.strip().split(maxsplit=1)
+                assert(md5 not in hash2path)
+                hash2path[md5] = path
+                path2hash[path] = md5
 
-        self.hash2path = hash2path
-        self.path2hash = path2hash
+            self.hash2path = hash2path
+            self.path2hash = path2hash
+
         if m_verbose: print("Load %d hash from %s" % (len(hash2path), self.hashfile))
         return hash2path, path2hash
 

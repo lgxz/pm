@@ -3,7 +3,10 @@
 
 目标：整理个人的所有历史照片/视频文件，方便存储和备份。
 
-**注意**：在 MacOS 下开发和测试。其它系统，需要调整 prepare.sh。
+**注意**：
+1. 在 MacOS 下使用 Python 3.7.3 开发和测试。
+2. Linux 系统，需要调整 prepare.sh，主要是 md5 命令不同。Linux 下是 md5sum，而且输出格式不同。
+3. 依赖 exiftool 工具
 
 # Why
 为存储和备份目的，希望照片库能够满足：
@@ -42,9 +45,19 @@ pm.py 的通用参数如下：
 3. 执行 `./pm.py import files.csv` 导入文件
 
 ## 备份
+### 本地
 同步最新的照片库(src) 到 USB/NAS 目录(dest)：
 `rsync -av --progress --delete src/ dest`
 
+### 云端
+使用 restic 加密备份。把照片库目录直接添加到 restic 的 repo，实现增量加密备份。
 
-# FAQ
+### Google Photos
+把照片库目录添加到 Google Sync 程序的备份目录。
+
+# 赞助
+如果这个项目对你有用，欢迎打赏：
+
+<img src="https://user-images.githubusercontent.com/858592/60753727-af6fcb80-a009-11e9-9239-ee1a5b2c0c31.png" width="70%">
+
 

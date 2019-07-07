@@ -45,9 +45,12 @@ pm.py 的通用参数如下：
 3. 执行 `./pm.py import files.csv` 导入文件
 
 ## 备份
+### 本地
 同步最新的照片库(src) 到 USB/NAS 目录(dest)：
 `rsync -av --progress --delete src/ dest`
 
+### 云端
+使用 restic 加密备份。把照片库目录直接添加到 restic 的 repo，实现增量加密备份。
 
 # 赞助
 如果这个项目对你有用，欢迎打赏：

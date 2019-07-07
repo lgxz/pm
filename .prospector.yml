@@ -1,0 +1,30 @@
+output-format: grouped
+strictness: veryhigh
+doc-warnings: true
+test-warnings: false
+max-line-length: 120
+
+ignore-paths:
+  - data/
+  - tasks/
+
+pylint:
+  run: true
+  disable:
+    - bad-builtin
+    - too-few-public-methods
+    - star-args
+    - protected-access
+    - broad-except
+    - import-error
+
+pep8:
+  full: true
+
+pep257:
+  full: true
+  disable:
+    - D400
+    - D401
+    - D203
+    - D204

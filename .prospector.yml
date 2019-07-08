@@ -8,6 +8,12 @@ ignore-paths:
   - data/
   - tasks/
 
+pyflakes:
+  run: false
+
+mccabe:
+  run: false
+
 pylint:
   run: true
   disable:
@@ -24,7 +30,11 @@ pep8:
 pep257:
   full: true
   disable:
-    - D400
-    - D401
+    - D105
+    - D106
     - D203
     - D204
+    - D212
+    - D213
+    - D400
+    - D401

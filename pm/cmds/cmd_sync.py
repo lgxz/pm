@@ -32,7 +32,6 @@ def cmd_sync(home, args):
         if not err:
             counts['ok'] += 1
         else:
-            print(f'E: {err} -> [{path}]')
             counts[err] += 1
 
     print(counts)

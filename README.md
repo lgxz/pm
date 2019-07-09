@@ -40,8 +40,7 @@ pm 命令的通用参数如下：
 
 ## 文件导入
 1. 执行 `./bin/prepare.sh <要导入的大量图片文件的绝对路径>` 生成 exif.csv 列表文件
-2. 执行 `./bin/pm --test --verbose import exif.csv` 观察导入情况
-3. 执行 `./bin/pm import exif.csv` 导入文件
+2. 执行 `./bin/pm import exif.csv` 导入文件
 
 ## 备份
 ### 本地

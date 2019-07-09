@@ -5,8 +5,7 @@
 
 **注意**：
 1. 在 MacOS 下使用 Python 3.7.3 开发和测试。
-2. Linux 系统，需要调整 prepare.sh，主要是 md5 命令不同。Linux 下是 md5sum，而且输出格式不同。
-3. 依赖 exiftool 工具
+2. 依赖 exiftool 工具
 
 # Why
 为存储和备份目的，希望照片库能够满足：

@@ -10,6 +10,32 @@ from datetime import timezone
 from pm import RunMode
 
 
+FORMATS_UTC = ('%Y:%m:%d %H:%M:%S.%fZ', '%Y:%m:%d %H:%M:%SZ')
+FORMATS_OTHERS = ('%Y:%m:%d %H:%M:%S', '%Y:%m:%d %H:%M:%S%z')
+
+
+def parse_datetime(dts):
+    """Parse datetime string"""
+    if dts[-1] == 'Z':
+        formats = FORMATS_UTC
+        utc = True
+    else:
+        formats = FORMATS_OTHERS
+        utc = False
+
+    dto = None
+    for fmt in formats:
+        try:
+            dto = datetime.strptime(dts, fmt)
+            break
+        except ValueError:
+            pass
+
+    if dto and utc:
+        dto = dto.astimezone(timezone.utc)
+    return dto
+
+
 class PhotoTime(dict):
     """处理照片时间
 
@@ -21,44 +47,29 @@ class PhotoTime(dict):
     """
 
     tag_names = ['mtime', 'create', 'orig', 'creation', 'gps']
-    tag_formats = ['%Y:%m:%d %H:%M:%S%z', '%Y:%m:%d %H:%M:%S', '%Y:%m:%d %H:%M:%S', '%Y:%m:%d %H:%M:%S%z', '']
 
     def __init__(self, path, dts):
         """Init"""
         assert len(dts) <= len(self.tag_names)
         dict.__init__(self)
         self.path = Path(path)
-        gps_dts = None
+
         for i, dt_ in enumerate(dts):
+            dt_ = dt_.strip()
             if not dt_:
                 continue
-            if dt_.startswith('00') or dt_.startswith('19'):
+
+            dto = parse_datetime(dt_)
+            if not dto:
+                print("W: [%s] -> ignore invalid [%s] time [%s]" % (path, tag, dt_))
+                continue
+
+            if dto.year < 2000:
                 print(f"W: [{path}] -> ignore time {dt_}")
                 continue
 
             tag = self.tag_names[i]
-            if tag != 'gps':
-                try:
-                    dto = datetime.strptime(dt_, self.tag_formats[i])
-                except ValueError:
-                    print("W: [%s] -> ignore invalid [%s] time [%s]" % (path, tag, dt_))
-                    continue
-                self[tag] = dto
-            else:
-                gps_dts = dt_
-
-        if gps_dts:
-            gps_dt = None
-            for tag_format in ('%Y:%m:%d %H:%M:%S.%fZ', '%Y:%m:%d %H:%M:%SZ'):
-                try:
-                    gps_dt = datetime.strptime(gps_dts, tag_format)
-                except ValueError:
-                    pass
-
-            if gps_dt:
-                self['gps'] = gps_dt.astimezone(timezone.utc)
-            else:
-                print("W: [%s] -> ignore invalid [GPS] time [%s]" % (path, gps_dts))
+            self[tag] = dto
 
     def get_datetime(self):
         """判断拍照时间"""
@@ -78,8 +89,6 @@ class PhotoTime(dict):
                 dt_ = self[tag]
                 delta = dt_.date() - gps_date
                 if abs(delta.days) > 1:
-                    if RunMode.verbose:
-                        print("W: [%s](%s) >>> [%s](GPS)" % (dt_, tag, self['gps']))
                     del self[tag]
 
             # 过滤后剩余的时间差异不大，按下述优先顺序选择一个

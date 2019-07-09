@@ -31,7 +31,13 @@ class PhotoHome():
         files = []
         cwd = Path.cwd()
         os.chdir(self.home)
-        for root, _, names in os.walk('.'):
+        for root, dirs, names in os.walk('.'):
+            if not names and not dirs:
+                try:
+                    os.rmdir(root)
+                except OSError:
+                    pass
+
             for name in names:
                 path = os.path.join(root, name)
                 if name == '.DS_Store':
@@ -51,6 +57,9 @@ class PhotoHome():
         name = dt_.time().strftime("%H%M%S")
 
         apath = self.home / subdir
+        if suffix == '.jpeg':
+            suffix = '.jpg'
+
         for i in range(self.MAX_NO):
             dst = apath / ("%s%02d%s" % (name, i, suffix))
             if not dst.exists():
@@ -102,6 +111,7 @@ class PhotoHome():
         if RunMode.test:
             return None
 
+        newpath.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
         path.rename(newpath)
         if not self.hashdb.rename(old_rpath, new_rpath):
             newpath.rename(path)

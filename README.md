@@ -26,22 +26,22 @@
 4. 管理信息存储在目录下的 .hash 文件里，无其它额外文件
 
 ## 工具描述
-prepare.sh 负责预处理要导入的图片目录，输出包括文件路径，文件MD5，文件各种Exif时间的 CSV 文件，供 pm.py 处理。
+./bin/prepare.sh 负责预处理要导入的图片目录，输出包括文件路径，文件MD5，文件各种Exif时间的 CSV 文件，供 pm.py 处理。
 
-pm.py 提供下述命令：
+./bin/pm 提供下述命令：
 1. import: 处理 prepare.sh 输出的 CSV 文件，导入文件到图片库
 2. sync: 同步图片库状态。即，保证图片库里的文件，和 .hash 文件一致
 3. stat: 统计和显示图片库状态
 
-pm.py 的通用参数如下：
+pm 命令的通用参数如下：
 1. --home: 图片库目录，默认为 "~/.photos"，可以为符号链接
 2. --test: dryrun 模式，不修改
 3. --verbose
 
 ## 文件导入
-1. 执行 `./prepare.sh <要导入的大量图片文件的绝对路径>` 生成 files.csv 列表文件
-2. 执行 `./pm.py --test --verbose import files.csv` 观察导入情况
-3. 执行 `./pm.py import files.csv` 导入文件
+1. 执行 `./bin/prepare.sh <要导入的大量图片文件的绝对路径>` 生成 exif.csv 列表文件
+2. 执行 `./bin/pm --test --verbose import exif.csv` 观察导入情况
+3. 执行 `./bin/pm import exif.csv` 导入文件
 
 ## 备份
 ### 本地

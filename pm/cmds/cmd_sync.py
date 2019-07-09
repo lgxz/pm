@@ -4,6 +4,7 @@
 """处理 sync 命令"""
 
 from pathlib import Path
+from collections import Counter
 
 from pm.photo import PhotoTime
 
@@ -12,11 +13,11 @@ def cmd_sync(home, args):
     """目录同步命令"""
     if not args.file:
         removed, added = home.sync()
+        print(f"W: {added} unknown files")
         print(f"Remove {removed} files from HashDB")
-        print(f"Add {added} files to HashDB")
         return
 
-    count = 0
+    counts = Counter()
     for line in open(args.file, 'r'):
         line = line.strip()
         if not line:
@@ -26,9 +27,15 @@ def cmd_sync(home, args):
         path = Path(path)
         pt_ = PhotoTime(path, dts)
         dt_ = pt_.get_datetime()
-        if home.move_file(path, dt_):
-            count += 1
-    print(f"{count} files relocated")
+
+        err = home.move_file(path, dt_)
+        if not err:
+            counts['ok'] += 1
+        else:
+            print(f'E: {err} -> [{path}]')
+            counts[err] += 1
+
+    print(counts)
 
 
 def init(sp_):

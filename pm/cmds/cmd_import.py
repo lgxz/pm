@@ -6,7 +6,6 @@
 from pathlib import Path
 from collections import Counter
 
-from pm import RunMode
 from pm.photo import PhotoTime
 
 
@@ -18,20 +17,16 @@ def do_import(home, datefile):
         if not line:
             continue
 
-        path, md5, *dts = line.rsplit(',')
-        if home.exists(md5):
-            if RunMode.verbose:
-                print("Import: ignore dupe file %s" % path)
-            continue
-
+        path, *dts = line.rsplit(',')
         path = Path(path)
         pt_ = PhotoTime(path, dts)
         dt_ = pt_.get_datetime()
 
-        err = home.add_file(path, dt_, md5)
+        err = home.add_file(path, dt_)
         if not err:
             counts['ok'] += 1
         else:
+            print(f'E: {err} -> [{path}]')
             counts[err] += 1
 
     return counts

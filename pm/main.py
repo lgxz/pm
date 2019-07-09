@@ -4,6 +4,7 @@
 """主程序"""
 
 import argparse
+from pathlib import Path
 
 from pm import RunMode
 from pm import cmds
@@ -16,8 +17,8 @@ def main():
 
     RunMode.test = args.test
     RunMode.verbose = args.verbose
-    home = PhotoHome(args.home)
-    args.func(home, args)
+    home = Path(args.home).expanduser().resolve(True)
+    args.func(PhotoHome(home), args)
 
 
 def parse_cmdline():

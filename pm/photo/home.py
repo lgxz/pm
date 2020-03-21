@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-"""照片库实现
+"""照片库实现.
 
 所有对外的参数，如果是路径，都需要传入 Path 对象
 """
@@ -17,21 +17,28 @@ from .hashdb import HashDB
 
 
 class PhotoHome():
-    """照片库"""
+    """照片库."""
     HASH_FILE = ".hash"
     MAX_NO = 100
 
     def __init__(self, home):
-        """Init with path"""
+        """Init with path."""
         self.home = home
         self.hashdb = HashDB(self.home / self.HASH_FILE)
 
     def _list_dir(self):
-        """列出目录下所有文件"""
+        """列出目录下所有文件."""
         files = []
         cwd = Path.cwd()
         os.chdir(self.home)
-        for root, _, names in os.walk('.'):
+        for root, dirs, names in os.walk('.'):
+            if not names and not dirs:
+                try:
+                    print('XXXXX', root)
+                    os.rmdir(root)
+                except OSError:
+                    pass
+
             for name in names:
                 path = os.path.join(root, name)
                 if name == '.DS_Store':
@@ -46,11 +53,14 @@ class PhotoHome():
         return files
 
     def _dt2path(self, dt_, suffix):
-        """根据 datetime 对象得到对应的文件路径"""
+        """根据 datetime 对象得到对应的文件路径."""
         subdir = dt_.date().strftime("%Y/%m/%d")
         name = dt_.time().strftime("%H%M%S")
 
         apath = self.home / subdir
+        if suffix == '.jpeg':
+            suffix = '.jpg'
+
         for i in range(self.MAX_NO):
             dst = apath / ("%s%02d%s" % (name, i, suffix))
             if not dst.exists():
@@ -58,7 +68,7 @@ class PhotoHome():
         return None
 
     def add_file(self, src, dt_, overwrite=False):
-        """Add a file"""
+        """Add a file."""
         try:
             md5 = hashlib.md5(src.read_bytes()).hexdigest()
         except FileNotFoundError:
@@ -86,7 +96,7 @@ class PhotoHome():
         return None
 
     def move_file(self, path, dt_):
-        """Move file to new locaton according dt_"""
+        """Move file to new locaton according dt_."""
         newpath = self._dt2path(dt_, path.suffix)
         if not newpath:
             return 'coll'
@@ -102,6 +112,7 @@ class PhotoHome():
         if RunMode.test:
             return None
 
+        newpath.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
         path.rename(newpath)
         if not self.hashdb.rename(old_rpath, new_rpath):
             newpath.rename(path)
@@ -109,7 +120,7 @@ class PhotoHome():
         return None
 
     def stat_suffix(self):
-        """统计文件扩展名"""
+        """统计文件扩展名."""
         counts = Counter()
         for path in self.hashdb.paths():
             suffix = path.rsplit('.', 1)[1]
@@ -117,7 +128,7 @@ class PhotoHome():
         return counts
 
     def sync(self):
-        """同步Hash文件和目录"""
+        """同步Hash文件和目录."""
         paths = set(self._list_dir())
         files = set(self.hashdb.paths())
 

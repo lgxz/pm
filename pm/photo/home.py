@@ -62,7 +62,7 @@ class PhotoHome():
             suffix = '.jpg'
 
         for i in range(self.MAX_NO):
-            dst = apath / ("%s%02d%s" % (name, i, suffix))
+            dst = apath / ("%s_%d%s" % (name, i, suffix))
             if not dst.exists():
                 return dst
         return None

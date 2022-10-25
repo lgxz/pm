@@ -1,4 +1,4 @@
 #!/bin/bash
 
-python -m pm.main $@
+python3 -m pm.main $@
 
